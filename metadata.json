@@ -1,0 +1,15 @@
+{
+  "name": "pgassmann-letsencrypt",
+  "version": "0.1.0",
+  "author": "pgassmann",
+  "summary": "Let's Encrypt",
+  "license": "Apache 2.0",
+  "source": "https://github.com/pgassmann/puppet-letsencrypt",
+  "project_page": "https://github.com/pgassmann/puppet-letsencrypt",
+  "issues_url": "https://github.com/pgassmann/puppet-letsencrypt/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
+    {"name":"puppetlabs-vcsrepo","version_requirement":">= 1.0.0"},
+    {"name":"jfryman-nginx","version_requirement":">= 0.2.7"}
+  ]
+}

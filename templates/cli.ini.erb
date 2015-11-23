@@ -1,0 +1,40 @@
+# This is an example of the kind of things you can do in a configuration file.
+# All flags used by the client can be configured here. Run Let's Encrypt with
+# "--help" to learn more about the available options.
+
+# Use a 4096 bit RSA key instead of 2048
+rsa-key-size = <%= scope['rsa_key_size'] %>
+
+# Always use the staging/testing server
+server = <%= scope['server'] %>
+
+# Uncomment and update to register with the specified e-mail address
+email = <%= scope['email'] %>
+
+# Uncomment to use a text interface instead of ncurses
+text = True
+
+# Uncomment to use the standalone authenticator on port 443
+# authenticator = standalone
+# standalone-supported-challenges = tls-sni-01
+
+# Uncomment to use the webroot authenticator. Replace webroot-path with the
+# path to the public_html / webroot folder being served by your web server.
+# authenticator = webroot
+webroot-path = <%= scope['webroot'] %>
+
+cert-path CERT_PATH
+                    Path to where cert is saved (with auth --csr),
+                    installed from or revoked. (default: None)
+key-path KEY_PATH   Path to private key for cert creation or revocation
+                    (if account key is missing) (default: None)
+fullchain-path FULLCHAIN_PATH
+                    Accompanying path to a full certificate chain (cert
+                    plus chain). (default: None)
+chain-path CHAIN_PATH
+                    Accompanying path to a certificate chain. (default:
+                    None)
+
+config-dir = <%= scope['config_dir'] %>
+work-dir   = <%= scope['work_dir'] %>
+logs-dir   = <%= scope['logs_dir'] %>
