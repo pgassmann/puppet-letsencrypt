@@ -4,13 +4,16 @@ class letsencrypt::nginx(
 ) {
   include letsencrypt
 
-  if defined(Nginx::Resource::Vhost[$default_vhost]) {
-    $vhost_ssl = getparam(Nginx::Resource::Vhost[$default_vhost], 'ssl')
-    nginx::resource::location{"${default_vhost}-letsencrypt":
-      vhost    =>  $default_vhost,
-      location =>  '/.well-known/acme-challenge',
-      www_root =>  $letsencrypt::webroot,
-      ssl      =>  $vhost_ssl,
+  unless defined(Nginx::Resource::Vhost[$default_vhost]){
+    nginx::resource::vhost{ 'default':
+        listen_options => default_server,
+        server_name    => ['default'],
+        www_root       => $letsencrypt::webroot,
     }
+
   }
+#  unless defined(Letsencrypt::Nginx::Location[$default_vhost]){
+#    letsencrypt::nginx::location{$default_vhost:}
+#  }
+  ensure_resource('letsencrypt::nginx::location', $default_vhost )
 }

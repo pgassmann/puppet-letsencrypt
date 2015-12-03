@@ -45,6 +45,7 @@ class letsencrypt(
   $config_dir          = '/etc/letsencrypt',
   $work_dir            = '/var/lib/letsencrypt',
   $logs_dir            = '/var/log/letsencrypt',
+  $nginx_locations     = {},
   $nginx_vhosts        = {},
   $exec_webroot        = {},
   $exec_standalone     = {},
@@ -69,7 +70,8 @@ class letsencrypt(
     group   => root,
     mode    => '0640';
   }
-  create_resources('letsencrypt::nginx::vhost', $nginx_vhosts)
-  create_resources('letsencrypt::exec::webroot', $exec_webroot)
+  create_resources('letsencrypt::nginx::location',  $nginx_locations)
+  create_resources('letsencrypt::nginx::vhost',     $nginx_vhosts)
+  create_resources('letsencrypt::exec::webroot',    $exec_webroot)
   create_resources('letsencrypt::exec::standalone', $exec_standalone)
 }

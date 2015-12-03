@@ -14,6 +14,7 @@ define letsencrypt::exec::webroot (
       domains => $domains,
       server  => $server,
     } ->
+    # TODO FIXME: This fails if defined multiple times
     file{ '/etc/facts.d/letsencrypt.txt':
       content => 'letsencrypt_firstrun=SUCCESS',
       owner   => root,
@@ -22,7 +23,7 @@ define letsencrypt::exec::webroot (
     }
   } else {
     exec{ "letsencrypt-exec-webroot-${name}":
-      command => "letsencrypt certonly -a webroot --webroot-path ${webroot} -d ${params_domain} --agree-dev-preview --server ${server} --renew-by-default",
+      command => "letsencrypt certonly -a webroot --webroot-path ${webroot} -d ${params_domain} --agree-dev-preview --renew-by-default --server ${server}",
       creates => "/etc/letsencrypt/live/${domains[0]}/fullchain.pem";
     }
   }
