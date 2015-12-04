@@ -11,8 +11,9 @@ describe 'letsencrypt::exec::standalone', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        email     => 'admin@example.com',
         agree_tos => true,
-        email => 'admin@example.com';
+        server    => 'https://acme-v01.api.letsencrypt.org/directory',
       }
     "
   end

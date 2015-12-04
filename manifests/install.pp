@@ -21,7 +21,7 @@ class letsencrypt::install(
       }
       # Link does not work, create wrapper
       file{'/usr/local/bin/letsencrypt':
-        content => "#!/bin/bash\npushd /opt/letsencrypt/ \n ./letsencrypt-auto \"$@\" \npopd\n",
+        content => "#!/bin/bash\ncd /opt/letsencrypt/ \n ./letsencrypt-auto \"$@\" || exit 1 \n",
         owner   => root,
         group   => root,
         mode    => '0750';

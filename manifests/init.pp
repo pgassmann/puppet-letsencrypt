@@ -1,49 +1,72 @@
 # Let's Encrypt
 # == Class: letsencrypt
 #
-# Full description of class letsencrypt here.
+# Let's Encrypt base configuration and hiera interface.
 #
 # === Parameters
 #
-# Document parameters here.
+# [*email*]
+#   Required, email-address for registration and key recovery
 #
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
+# [*agree_tos*]
+#   Required true,  Please read the Terms of Service at
+#   https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf.
+#   You must agree in order to register with the ACME
+#   server at https://acme-v01.api.letsencrypt.org/directory
 #
-# === Variables
+# [*server*]
+#   ACME Server, defaults to staging instance. For Production use
+#   set it to 'https://acme-v01.api.letsencrypt.org/directory'
 #
-# Here you should define a list of variables that this module would require.
+# [*webroot*]
+#   This directory is configured as webroot for the webroot authentication
+#   locations added to the vhost to allow renewals
 #
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
+# [*firstrun_webroot*]
+#   Use different webroot on first run.
+#   Set this to the default webroot of the webserver if the service
+#   starts automatically when installed.
+#   E.g. Nginx on Ubuntu: /usr/share/nginx/html
+#
+# [*firstrun_standalone*]
+#   Use standalone mode on first run.
+#   Set this to true if the webserver does not start automatically when installed.
+#   letsencrypt will use standalone mode to get the certificate
+#   before the webserver is started the first time.
+#
+# [*rsa_key_size*], [*work_dir*], [*logs_dir*],
+#   Configruation options for letsencrypt cli.ini
+#
+# [*nginx_locations*], [*nginx_vhosts*], [*exec_standalone*], [*exec_webroot*]
+#   These Parameters can be used to create instances of these defined types through hiera
 #
 # === Examples
 #
 #  class { 'letsencrypt':
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
+#    email            => 'email@example.com',
+#    agree_tos        => true
+#    firstrun_webroot => '/usr/share/nginx/html'
+#    nginx_vhosts     => {
+#      'mydomain.example.com' => {}
+#    }
 #  }
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Philipp Gassmann <phiphi@phiphi.ch>
 #
 # === Copyright
 #
-# Copyright 2015 Your name here, unless otherwise noted.
+# Copyright 2015 Philipp Gassmann here, unless otherwise noted.
 #
 class letsencrypt(
   $email,
   $agree_tos           = false,
+  $server              = 'https://acme-staging.api.letsencrypt.org/directory', # 'https://acme-v01.api.letsencrypt.org/directory', #
   $webroot             = '/var/lib/letsencrypt/webroot',
-  $server              = 'https://acme-v01.api.letsencrypt.org/directory', # https://acme-staging.api.letsencrypt.org/directory
-  $firstrun_standalone = true,
+  $firstrun_webroot    = undef, # For Debian & Nginx: /usr/share/nginx/html
+  $firstrun_standalone = false,
   $rsa_key_size        = '2048',
-  $config_dir          = '/etc/letsencrypt',
   $work_dir            = '/var/lib/letsencrypt',
   $logs_dir            = '/var/log/letsencrypt',
   $nginx_locations     = {},
@@ -55,24 +78,17 @@ class letsencrypt(
 
   unless $agree_tos { fail('letsencrypt: Please read the Terms of Service at https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf. You must agree in order to register with the ACME server at https://acme-v01.api.letsencrypt.org/directory') }
 
-  if $webroot == '/var/lib/letsencrypt/webroot' {
-    file{ [
-        '/var/lib/letsencrypt',
-        '/var/lib/letsencrypt/webroot',
-      ]:
-        ensure => directory,
-        owner  => root,
-        group  => root,
-        mode   => '0644';
-    }
+  file{ [
+      '/etc/letsencrypt',
+      '/var/lib/letsencrypt',
+      '/var/lib/letsencrypt/webroot',
+    ]:
+      ensure => directory,
+      owner  => root,
+      group  => root,
+      mode   => '0644';
   }
 
-  file{'/etc/letsencrypt':
-    ensure => directory,
-    owner  => root,
-    group  => root,
-    mode   => '0644';
-  }
   file{'/etc/letsencrypt/cli.ini':
     content => template('letsencrypt/cli.ini.erb'),
     owner   => root,

@@ -11,8 +11,9 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        email     => 'admin@example.com',
         agree_tos => true,
-        email => 'admin@example.com',
+        server    => 'https://acme-v01.api.letsencrypt.org/directory',
         firstrun_standalone => false,
       }
     "
@@ -65,7 +66,7 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
       :server  => 'http://boulderx.example.com',
    )}
   end
-  context "with firstrun_standalone mode" do
+  context "with firstrun_standalone mode success" do
     let(:pre_condition) do
       "
         Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
@@ -85,5 +86,22 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
     let(:title) { 'foo.com' }
     it { should compile.with_all_deps }
     it { should contain_exec('letsencrypt-exec-webroot-foo.com')}
+  end
+  context "with firstrun_webroot " do
+    let(:pre_condition) do
+      "
+        Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
+        class{ 'letsencrypt':
+          agree_tos        => true,
+          email            => 'admin@example.com',
+          firstrun_webroot => '/firstrun-webroot',
+        }
+      "
+    end
+    let(:title) { 'foo.com' }
+    it { should compile.with_all_deps }
+    it { should contain_exec('letsencrypt-exec-webroot-foo.com').with(
+      :command => /--webroot-path \/firstrun-webroot/,
+    )}
   end
 end
