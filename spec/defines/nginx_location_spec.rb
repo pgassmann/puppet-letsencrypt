@@ -11,6 +11,7 @@ describe 'letsencrypt::nginx::location', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        agree_tos => true,
         email => 'admin@example.com';
       }
       include nginx

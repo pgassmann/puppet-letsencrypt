@@ -11,6 +11,7 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        agree_tos => true,
         email => 'admin@example.com',
         firstrun_standalone => false,
       }
@@ -20,7 +21,7 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
     it { should compile.with_all_deps }
 
     it { should contain_exec('letsencrypt-exec-webroot-mydomain.example.com').with(
-      :command => 'letsencrypt certonly -a webroot --webroot-path /var/lib/letsencrypt/webroot -d mydomain.example.com --agree-dev-preview --renew-by-default --server https://acme-v01.api.letsencrypt.org/directory',
+      :command => 'letsencrypt certonly -a webroot --webroot-path /var/lib/letsencrypt/webroot -d mydomain.example.com --renew-by-default --server https://acme-v01.api.letsencrypt.org/directory',
       :creates => '/etc/letsencrypt/live/mydomain.example.com/fullchain.pem',
    )}
   end
@@ -35,7 +36,7 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
     it { should compile.with_all_deps }
 
     it { should contain_exec('letsencrypt-exec-webroot-foo.com').with(
-      :command => 'letsencrypt certonly -a webroot --webroot-path /tmp/webroot -d d1.foo.com -d d2.bar.com --agree-dev-preview --renew-by-default --server http://boulderx.example.com',
+      :command => 'letsencrypt certonly -a webroot --webroot-path /tmp/webroot -d d1.foo.com -d d2.bar.com --renew-by-default --server http://boulderx.example.com',
       :creates => '/etc/letsencrypt/live/d1.foo.com/fullchain.pem',
    )}
   end
@@ -44,6 +45,7 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
       "
         Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
         class{ 'letsencrypt':
+          agree_tos => true,
           email => 'admin@example.com',
           firstrun_standalone => true,
         }
@@ -68,6 +70,7 @@ describe 'letsencrypt::exec::webroot', :type => 'define' do
       "
         Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
         class{ 'letsencrypt':
+          agree_tos => true,
           email => 'admin@example.com',
           firstrun_standalone => true,
         }

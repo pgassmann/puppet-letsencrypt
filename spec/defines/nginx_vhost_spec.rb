@@ -11,6 +11,7 @@ describe 'letsencrypt::nginx::vhost', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        agree_tos => true,
         email => 'admin@example.com';
       }
       include nginx
@@ -47,6 +48,7 @@ describe 'letsencrypt::nginx::vhost', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        agree_tos => true,
         email => 'admin@example.com';
       }
       include nginx

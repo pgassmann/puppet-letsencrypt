@@ -4,8 +4,10 @@ define letsencrypt::exec::webroot (
   $webroot = $letsencrypt::webroot,
   $server  = $letsencrypt::server,
 ){
-  require letsencrypt
+  include letsencrypt
   validate_array($domains)
+  validate_string($server)
+  validate_string($webroot)
 
   $params_domain = join($domains, ' -d ')
 
@@ -14,7 +16,8 @@ define letsencrypt::exec::webroot (
       domains => $domains,
       server  => $server,
     } ->
-    # TODO FIXME: This fails if defined multiple times
+    # TODO FIXME: This fails if webroot is defined multiple times
+    file{ '/etc/facts.d': ensure => directory; }
     file{ '/etc/facts.d/letsencrypt.txt':
       content => 'letsencrypt_firstrun=SUCCESS',
       owner   => root,
@@ -23,8 +26,9 @@ define letsencrypt::exec::webroot (
     }
   } else {
     exec{ "letsencrypt-exec-webroot-${name}":
-      command => "letsencrypt certonly -a webroot --webroot-path ${webroot} -d ${params_domain} --agree-dev-preview --renew-by-default --server ${server}",
-      creates => "/etc/letsencrypt/live/${domains[0]}/fullchain.pem";
+      command => "letsencrypt certonly -a webroot --webroot-path ${webroot} -d ${params_domain} --renew-by-default --server ${server}",
+      creates => "/etc/letsencrypt/live/${domains[0]}/fullchain.pem",
+      require  => File['/etc/letsencrypt/cli.ini'];
     }
   }
 }

@@ -23,18 +23,8 @@ text = True
 # authenticator = webroot
 webroot-path = <%= scope['webroot'] %>
 
-cert-path CERT_PATH
-                    Path to where cert is saved (with auth --csr),
-                    installed from or revoked. (default: None)
-key-path KEY_PATH   Path to private key for cert creation or revocation
-                    (if account key is missing) (default: None)
-fullchain-path FULLCHAIN_PATH
-                    Accompanying path to a full certificate chain (cert
-                    plus chain). (default: None)
-chain-path CHAIN_PATH
-                    Accompanying path to a certificate chain. (default:
-                    None)
-
 config-dir = <%= scope['config_dir'] %>
 work-dir   = <%= scope['work_dir'] %>
 logs-dir   = <%= scope['logs_dir'] %>
+
+agree-tos = <%= scope['agree_tos'] %>

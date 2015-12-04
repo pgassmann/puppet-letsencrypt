@@ -38,6 +38,7 @@
 #
 class letsencrypt(
   $email,
+  $agree_tos           = false,
   $webroot             = '/var/lib/letsencrypt/webroot',
   $server              = 'https://acme-v01.api.letsencrypt.org/directory', # https://acme-staging.api.letsencrypt.org/directory
   $firstrun_standalone = true,
@@ -50,7 +51,9 @@ class letsencrypt(
   $exec_webroot        = {},
   $exec_standalone     = {},
 ) {
-  require letsencrypt::install
+  include letsencrypt::install
+
+  unless $agree_tos { fail('letsencrypt: Please read the Terms of Service at https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf. You must agree in order to register with the ACME server at https://acme-v01.api.letsencrypt.org/directory') }
 
   if $webroot == '/var/lib/letsencrypt/webroot' {
     file{ [
@@ -64,11 +67,18 @@ class letsencrypt(
     }
   }
 
+  file{'/etc/letsencrypt':
+    ensure => directory,
+    owner  => root,
+    group  => root,
+    mode   => '0644';
+  }
   file{'/etc/letsencrypt/cli.ini':
     content => template('letsencrypt/cli.ini.erb'),
     owner   => root,
     group   => root,
-    mode    => '0640';
+    mode    => '0640',
+    require => Class['letsencrypt::install'];
   }
   create_resources('letsencrypt::nginx::location',  $nginx_locations)
   create_resources('letsencrypt::nginx::vhost',     $nginx_vhosts)

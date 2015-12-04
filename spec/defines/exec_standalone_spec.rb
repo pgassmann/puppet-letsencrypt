@@ -11,6 +11,7 @@ describe 'letsencrypt::exec::standalone', :type => 'define' do
     "
       Exec{ path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin' }
       class{ 'letsencrypt':
+        agree_tos => true,
         email => 'admin@example.com';
       }
     "
@@ -19,7 +20,7 @@ describe 'letsencrypt::exec::standalone', :type => 'define' do
     it { should compile.with_all_deps }
 
     it { should contain_exec('letsencrypt-exec-standalone-mydomain.example.com').with(
-      :command => 'letsencrypt certonly -a standalone -d mydomain.example.com --agree-dev-preview --renew-by-default --server https://acme-v01.api.letsencrypt.org/directory',
+      :command => 'letsencrypt certonly -a standalone -d mydomain.example.com --renew-by-default --server https://acme-v01.api.letsencrypt.org/directory',
       :creates => '/etc/letsencrypt/live/mydomain.example.com/fullchain.pem',
    )}
   end
@@ -33,7 +34,7 @@ describe 'letsencrypt::exec::standalone', :type => 'define' do
     it { should compile.with_all_deps }
 
     it { should contain_exec('letsencrypt-exec-standalone-foo.com').with(
-      :command => 'letsencrypt certonly -a standalone -d d1.foo.com -d d2.bar.com --agree-dev-preview --renew-by-default --server http://boulderx.example.com',
+      :command => 'letsencrypt certonly -a standalone -d d1.foo.com -d d2.bar.com --renew-by-default --server http://boulderx.example.com',
       :creates => '/etc/letsencrypt/live/d1.foo.com/fullchain.pem',
    )}
   end
