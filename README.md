@@ -196,12 +196,13 @@ necessary or important to include here. Please use the `## ` header.
 
 * Philipp Gassmann <phiphi@phiphi.ch>
 
-## TODO & Planned
+## TODO & Ideas
 
 * More Documentation
 * More Testing
 * Other install method
 * Native ruby provider to get certificate? (https://github.com/unixcharles/acme-client)
+* Use this simpler, small python client? (https://github.com/diafygi/acme-tiny)
 * Automatically configure SSL certificate and key on the vhost
 * Renewal management
 * Add Domains to existing Certificates
